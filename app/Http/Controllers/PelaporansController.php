@@ -53,8 +53,8 @@ class PelaporansController extends Controller
     public function generatePdfByDateRange($input1,$input2)
     {
         $user = Auth::user();
-        $date1 = date("Y-m-d",strtotime($input1));
-        $date2 = date("Y-m-d",strtotime($input2));
+        // $date1 = date("Y-m-d",strtotime($input1));
+        // $date2 = date("Y-m-d",strtotime($input2));
 
         $data = DB::table('persetujuans as ps')
         ->join('pengajuans as pj','pj.id','=','ps.pngjuan_id')
@@ -64,7 +64,7 @@ class PelaporansController extends Controller
         ->where('ps.stat_id',3)
         ->where('ps.user_id',1)
         ->where('id.departement_id',$user->departements_id)
-        ->whereBetween('ps.updated_at',[$date1." 00:00:00",$date2." 00:00:00"])
+        ->whereBetween('ps.updated_at',[$input1." 00:00:00",$input2." 23:59:59"])
         ->get();
          $pdf = PDF::loadView('laporan.print',compact('data'))->setPaper('a4', 'landscape');
         return $pdf->stream('laporan.pdf');

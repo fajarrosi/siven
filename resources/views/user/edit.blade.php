@@ -51,6 +51,24 @@
       @endif
     </div>
 
+
+     <div class="form-group">  
+      <label for="departement_id">Departement</label>
+      <select class="form-control" id="departement_id" name="departement_id">
+        @if(count($departements))
+        @foreach($departements as $row)
+        <option value="{{$row->id}}" {{$row->id == $user->departements_id ? 'selected="selected"' : ''}}>{{$row->name}}</option>
+        @endforeach
+        @endif
+      </select>
+      @if ($errors->has('departement_id'))
+      <span class="help-block">{{ $errors->first('departement_id') }}</span>
+      @endif
+    </div>
+    <div class="form-group">
+    <label>Password</label>
+    <input type="Password" name="pass" id="pw" class="form-control">
+    </div>
   </div>
   <!-- /.box-body -->
 

@@ -104,8 +104,14 @@ class UsersController extends Controller
     {
         //
         $user = User::find($id);
-        $roles = Role::all();
-        return view('user.edit',['user' => $user,'roles' => $roles]);
+        $roles = DB::table('roles')
+                 ->select('name','id')
+                 ->get();
+        $departements = DB::table('departements')
+                        ->select('name','id')
+                        ->get();
+        // dd($user,$roles,$departements,$user->departements_id,$user->roles[0]->id);
+        return view('user.edit',compact('user','roles','departements'));
     }
 
     /**
@@ -117,12 +123,26 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
             $user = User::find($id);
+           if($request->pass){
+            $hasil = 1;
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
+                'password'=>hash::make($request->pass),
+                'departements_id' =>$request->input('departement_id')
             ]);
+           }else{
+            //null
+            $hasil = 99;
+
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'departements_id' =>$request->input('departement_id')
+            ]);
+           } 
+
                         $roles = $user->roles;
 
                 foreach ($roles as $key => $value) {
@@ -132,11 +152,13 @@ class UsersController extends Controller
                 $role = Role::find($request->input('role_id'));
 
                 $user->attachRole($role);
+
+                dd($hasil);
             // $user->attachRole($request->role);
-             return redirect()->route('user.index')->withStatus([
-            'message' => 'Data berhasil diupdate',
-             'color' => 'success'
-         ]);
+         //     return redirect()->route('user.index')->withStatus([
+         //    'message' => 'Data berhasil diupdate',
+         //     'color' => 'success'
+         // ]);
     }
 
     /**

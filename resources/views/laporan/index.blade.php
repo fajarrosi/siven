@@ -15,16 +15,20 @@
 	<div class="box-header">
 	</div>
 	<div class="box-body">
-        <div class="form-group">
-            <label>Periode Tanggal </label>
-            <div class="input-group">
-                <input type="text" class="form-control startdate datetimepicker-input" data-toggle="datetimepicker" data-target=".startdate" id="test1" />
-                    <span class="input-group-text">s/d</span>
-                <input type="text" class="form-control enddate datetimepicker-input" data-toggle="datetimepicker" data-target=".enddate" id="test2" />
-            </div>
-        </br>
+
+              <div class="form-group col-md-4">
+                <label>Cetak berdasarkan tanggal :</label>
+
+                <div class="input-group">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right" id="reservation">
+                </div>
+                <!-- /.input group -->
+            </br>
 				<a href = "#" class="btn btn-flat btn-primary" id="lap" name="lap">Cetak Laporan</a>
-         </div>
+              </div>
 	</div>
 </div>
 <div class="box">
@@ -67,39 +71,38 @@
 
 
 @section('css')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" />
+<link rel="stylesheet" href="{{ URL::asset('css/daterangepicker.css') }}" />
 
 @stop
 
 @section('js')
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="{{ URL::asset('js/moment.min.js') }}"></script>
+<script src="{{ URL::asset('js/daterangepicker.js') }}"></script>
+
 <script>
 	$(function () {
-		$('#item').dataTable();
-		setDateRangePicker(".startdate", ".enddate");
-		function setDateRangePicker(input1, input2){
-			  $(input1).datetimepicker({
-			    format: "DD-MM-YYYY",
-			    useCurrent: false
-			  })
-			  $(input1).on("change.datetimepicker", function (e) {
-			    $(input2).val("")
-			        $(input2).datetimepicker('minDate', e.date);
-			    })
-			  $(input2).datetimepicker({
-			    format: "DD-MM-YYYY",
-			    useCurrent: false
-			  })
-			}
+		// $('#item').dataTable();
+    //Date range picker
+    var start;
+    var end;
+    $('#reservation').daterangepicker({
+    	opens : 'center',
+    	locale : {format : 'DD/MM/YYYY'} 
+    })
+    $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+    	start = picker.startDate.format('YYYY-MM-DD');
+    	end = picker.endDate.format('YYYY-MM-DD');
+  console.log('awal date',start,'akhir',end);
+	});
+
 
 		$('#lap').click(function(){
-			var $input1 = $('#test1').val();
-			var $input2 = $('#test2').val();
+			var $input1 = $('#reservation').val();
+
+			console.log($input1,'awal date->',start,'akhir date->',end);
 			$.ajax({
-				url:"/laporan/"+$input1+"/"+$input2,
+				url:"/laporan/"+start+"/"+end
 			});
-			console.log($input1,$input2);
 
 		});																	
 	});
